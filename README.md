@@ -279,3 +279,166 @@ console.log(store.getState())
 #### EXPECTED RESULT
 
 ![reduxDevTools_updateUser](./docs/images/reduxDevTools_updateUser.png)
+
+10. **Implementing the Provider**
+
+```javascript
+import { Provider } from 'react-redux'
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+)
+```
+
+11. **Improving the File Structure**
+
+- Create a folder called /reducers
+- Inside of it, create two files.
+
+  - productsReducer.js
+
+  ```javascript
+  export default productsReducer(state = [], action) {
+    return state
+  }
+  ```
+
+  - userReducer.js
+
+  ```javascript
+  export default userReducer(state = '', action) {
+    switch (action.type) {
+      case 'updateUser':
+        return action.payload
+      default:
+        return state
+    }
+  }
+  ```
+
+- Fix the imports in the main file
+
+```javascript
+import productsReducer from './reducers/productsReducer'
+import userReducer from './reducers/userReducer'
+```
+
+12. **Connect components to the store - mapStateToProps**
+
+App.js
+
+```javascript
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+
+class App extends Component {
+  render() {
+    console.log(this.props)
+
+    return (
+      <div className="App">
+        <h1>React + Redux</h1>
+      </div>
+    )
+  }
+}
+
+const mapStateToProps = state => {
+  return state
+}
+
+export default connect(mapStateToProps)(App)
+```
+
+#### EXPECTED RESULT
+
+![mapStateToProps](./docs/images/mapStateToProps.png)
+
+- If you want to be more specific
+  App.js
+
+```javascript
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+
+class App extends Component {
+  render() {
+    console.log(this.props)
+
+    return (
+      <div className="App">
+        <h1>React + Redux</h1>
+      </div>
+    )
+  }
+}
+
+const mapStateToProps = state => ({
+  products: state.products,
+  user: state.user
+})
+
+export default connect(mapStateToProps)(App)
+```
+
+#### EXPECTED RESULT
+
+![mapStateToProps](./docs/images/mapStateToProps.png)
+
+13. **Connect components to the store - mapActionsToProps**
+
+- Create a folder called /actions
+- Inside of it, create two files.
+
+userActions.js
+
+```javascript
+export const UPDATE_USER = 'users:updateUser'
+
+export function updateUser(newUser) {
+  return {
+    type: UPDATE_USER,
+    payload: {
+      user: newUser
+    }
+  }
+}
+```
+
+- Update the userReducer.js file
+
+userReducer.js
+
+```javascript
+```
+
+App.js
+
+```javascript
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+
+class App extends Component {
+  render() {
+    console.log(this.props)
+
+    return (
+      <div className="App">
+        <h1>React + Redux</h1>
+      </div>
+    )
+  }
+}
+
+const mapStateToProps = state => ({
+  products: state.products,
+  user: state.user
+})
+
+const mapActionsToProps = {}
+
+export default connect(mapStateToProps)(App)
+```
