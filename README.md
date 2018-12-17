@@ -391,7 +391,7 @@ export default connect(mapStateToProps)(App)
 13. **Connect components to the store - mapActionsToProps**
 
 - Create a folder called /actions
-- Inside of it, create two files.
+- Inside of it, create a file.
 
 userActions.js
 
@@ -413,6 +413,16 @@ export function updateUser(newUser) {
 userReducer.js
 
 ```javascript
+import { UDPATE_USER } from './actions/userActions'
+
+export default userReducer(state = '', action) {
+  switch (action.type) {
+    case UPDATE_USER:
+      return action.payload.user
+    default:
+      return state
+  }
+}
 ```
 
 App.js
@@ -420,14 +430,25 @@ App.js
 ```javascript
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { updateUser } from './actions/userActions'
 
 class App extends Component {
+  constructor(props) {
+    this.onUpdateUser = this.onUpdateUser.bind(this)
+  }
+
+  onUpdateUser() {
+    this.props.onUpdateUser('Sammy')
+  }
+
   render() {
     console.log(this.props)
 
     return (
       <div className="App">
         <h1>React + Redux</h1>
+        <button onClick={this.props.onUpdateUser}>Update User</button>
+        <h3>{this.props.user}</h3>
       </div>
     )
   }
@@ -438,7 +459,16 @@ const mapStateToProps = state => ({
   user: state.user
 })
 
-const mapActionsToProps = {}
+const mapActionsToProps = {
+  onUpdateUser: updateUser
+}
 
-export default connect(mapStateToProps)(App)
+export default connect(
+  mapStateToProps,
+  mapActionsToProps
+)(App)
 ```
+
+#### EXPECTED RESULT
+
+![mapStateToProps](./docs/images/mapActionsToProps.png)
