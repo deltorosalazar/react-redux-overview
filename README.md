@@ -471,4 +471,169 @@ export default connect(
 
 #### EXPECTED RESULT
 
-![mapStateToProps](./docs/images/mapActionsToProps.png)
+![mapActionsToProps](./docs/images/mapActionsToProps.png)
+
+14. **Using the props that are passed in**
+
+- Create a random prop in the index.js file
+
+```javascript
+ReactDOM.render(
+  <Provider store={store}>
+    <App randomProp="randomProp" />
+  </Provider>,
+  document.getElementById('root')
+)
+```
+
+- In the App.js file, update the mapStateToProps function
+
+```javascript
+const mapStateToProps = (state, props) => {
+  return {
+    products: state.products,
+    user: state.user,
+    userPlusProp: `${state.user} ${props.randomProp}`
+  }
+}
+```
+
+#### EXPECTED RESULT
+
+![mapActionsToPropsPlus](./docs/images/mapActionsToPropsPlus.png)
+
+15. **Make API requests using redux-thunk**
+
+- Install redux-thunk and axios
+
+```
+yarn add redux-thunk axios
+```
+
+- Modify the App.js
+
+```javascript
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './App'
+import * as serviceWorker from './serviceWorker'
+import productsReducer from './reducers/productsReducer'
+import userReducer from './reducers/userReducer'
+
+import { applyMiddleware, compose, combineReducers, createStore } from 'redux'
+import thunk from 'redux-thunk'
+
+import { Provider } from 'react-redux'
+
+const allReducers = combineReducers({
+  products: productsReducer,
+  user: userReducer
+})
+
+const allStoreEnhancers = compose(
+  applyMiddleware(thunk),
+  window.devToolsExtension && window.devToolsExtension()
+)
+
+const store = createStore(
+  allReducers,
+  {
+    products: [
+      {
+        name: 'MacBook Pro'
+      }
+    ],
+    user: 'Manuel Del Toro'
+  },
+  allStoreEnhancers
+)
+
+// const updateUserAction = {
+//   type: 'updateUser',
+//   payload: {
+//     user: 'John'
+//   }
+// }
+
+// store.dispatch(updateUserAction)
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App randomProp="randomProp" />
+  </Provider>,
+  document.getElementById('root')
+)
+
+serviceWorker.unregister()
+```
+
+- Modify the actions/usersActions.js
+
+userActions.js
+
+```javascript
+import axios from 'axios'
+
+export const UPDATE_USER = 'users:updateUser'
+export const SHOW_ERROR = 'users:showError '
+
+export function updateUser(newUser) {
+  return {
+    type: UPDATE_USER,
+    payload: {
+      user: newUser
+    }
+  }
+}
+
+export function showError() {
+  return {
+    type: SHOW_ERROR,
+    payload: 'ERROR'
+  }
+}
+
+export function apiRequest() {
+  return dispatch => {
+    axios
+      .get('https://jsonplaceholder.typicode.com/users')
+      .then(response => {
+        console.log(response.data)
+        dispatch(updateUser(response.data[0].name))
+      })
+      .catch(error => {
+        console.log(error)
+        dispatch(showError)
+      })
+  }
+}
+```
+
+- Modify the App.js
+
+```javascript
+import { updateUser, apiRequest } from './actions/userActions'
+
+class App extends Component {
+
+  ...
+
+  componentWillMount() {
+    this.props.onApiRequest()
+  }
+
+  ...
+
+}
+
+...
+
+const mapActionToProps = {
+  onUpdateUser: updateUser,
+  onApiRequest: apiRequest
+}
+```
+
+#### EXPECTED RESULT
+
+![apiRequest](./docs/images/apiRequest.png)

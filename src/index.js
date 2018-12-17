@@ -5,7 +5,8 @@ import * as serviceWorker from './serviceWorker'
 import productsReducer from './reducers/productsReducer'
 import userReducer from './reducers/userReducer'
 
-import { combineReducers, createStore } from 'redux'
+import thunk from 'redux-thunk'
+import { applyMiddleware, compose, combineReducers, createStore } from 'redux'
 
 import { Provider } from 'react-redux'
 
@@ -13,6 +14,11 @@ const allReducers = combineReducers({
   products: productsReducer,
   user: userReducer
 })
+
+const allStoreEnhancers = compose(
+  applyMiddleware(thunk),
+  window.devToolsExtension && window.devToolsExtension()
+)
 
 const store = createStore(
   allReducers,
@@ -24,7 +30,7 @@ const store = createStore(
     ],
     user: 'Manuel Del Toro'
   },
-  window.devToolsExtension && window.devToolsExtension()
+  allStoreEnhancers
 )
 
 // const updateUserAction = {
@@ -38,7 +44,7 @@ const store = createStore(
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <App randomProp="randomProp" />
   </Provider>,
   document.getElementById('root')
 )

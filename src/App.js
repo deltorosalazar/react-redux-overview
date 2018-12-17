@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { updateUser } from './actions/userActions'
+import { updateUser, apiRequest } from './actions/userActions'
 import './App.css'
 
 class App extends Component {
@@ -12,6 +12,10 @@ class App extends Component {
 
   onUpdateUser() {
     this.props.onUpdateUser('Sammy')
+  }
+
+  componentWillMount() {
+    this.props.onApiRequest()
   }
 
   render() {
@@ -27,13 +31,15 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, props) => ({
   products: state.products,
-  user: state.user
+  user: state.user,
+  userPlusProp: `${state.user} + ${props.randomProp}`
 })
 
 const mapActionToProps = {
-  onUpdateUser: updateUser
+  onUpdateUser: updateUser,
+  onApiRequest: apiRequest
 }
 
 export default connect(
